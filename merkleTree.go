@@ -1,11 +1,8 @@
-package prototype
+package main
 
 import (
 	"crypto/sha256"
 	"errors"
-
-	tx "blockchain/transaction"
-	"blockchain/utils"
 )
 
 // a binary merkle tree
@@ -16,14 +13,14 @@ type MerkleNode struct {
 	Rchind *MerkleNode
 }
 
-func NewTree(txs []*tx.Transaction) (root *MerkleNode, err error) {
+func NewTree(txs []*Transaction) (root *MerkleNode, err error) {
 	if len(txs) == 0 {
 		return nil, errors.New("NewTree() error: doesn't cotain any transactions")
 	}
 
 	hashList := make([]hash, 0)
 	for _, tx := range txs {
-		bytetx := utils.StructToByte(tx)
+		bytetx := StructToByte(tx)
 		hashList = append(hashList, sha256.Sum256(bytetx))
 	}
 	return buildTree(hashList), nil
@@ -92,7 +89,7 @@ func buildTree(hList []hash) (root *MerkleNode) {
 }
 
 func ComputeParentHash(m, n *MerkleNode) hash {
-	mb := utils.StructToByte(m)
-	nb := utils.StructToByte(n)
+	mb := StructToByte(m)
+	nb := StructToByte(n)
 	return sha256.Sum256(append(mb, nb...))
 }

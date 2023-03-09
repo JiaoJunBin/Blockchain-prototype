@@ -1,7 +1,6 @@
-package prototype
+package main
 
 import (
-	"blockchain/utils"
 	"crypto/sha256"
 	"fmt"
 	"testing"
@@ -21,7 +20,7 @@ func TestBuildTree(t *testing.T) {
 	}
 	hList := make([]hash, 0)
 	for _, c := range cases {
-		b := utils.StructToByte(c)
+		b := StructToByte(c)
 		hList = append(hList, sha256.Sum256(b))
 	}
 	root := buildTree(hList)

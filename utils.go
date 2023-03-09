@@ -1,11 +1,11 @@
-package utils
+package main
 
 import (
 	"unsafe"
 )
 
 // type toByte interface {
-// 	tx.Transaction | bc.BlockHeader | bc.MerkleNode
+// 	*Transaction | *BlockHeader | *MerkleNode
 // }
 
 type mockStruct struct {
