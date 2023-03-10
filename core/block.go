@@ -6,8 +6,9 @@ type hash [32]byte
 
 // a block in the blockchain
 type Block struct {
-	Header *BlockHeader
-	tx     []*Transaction
+	Header     *BlockHeader
+	tx         []*Transaction
+	merkleRoot *MerkleTree
 }
 
 type BlockHeader struct {
@@ -20,6 +21,6 @@ type BlockHeader struct {
 	Nonce          uint32
 }
 
-func CreateBlock() {
+func CreateBlock(txs []*Transaction) {
 
 }
