@@ -1,6 +1,8 @@
 package core
 
 import (
+	"github.com/holiman/uint256"
+	"math/big"
 	"unsafe"
 )
 
@@ -24,4 +26,12 @@ func StructToByte[T any](anystruct T) (data []byte) {
 	}
 	data = *(*[]byte)(unsafe.Pointer(mockBytes))
 	return
+}
+
+// convert uint256.Int to big.Int
+func ToBig(z *uint256.Int) *big.Int {
+	b := new(big.Int)
+	words := [4]big.Word{big.Word(z[0]), big.Word(z[1]), big.Word(z[2]), big.Word(z[3])}
+	b.SetBits(words[:])
+	return b
 }

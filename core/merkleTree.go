@@ -6,6 +6,10 @@ import (
 )
 
 // a binary merkle tree
+type MerkleTree struct {
+	root *MerkleNode
+}
+
 type MerkleNode struct {
 	Value  hash
 	Parent *MerkleNode
