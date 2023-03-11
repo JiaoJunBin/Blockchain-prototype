@@ -17,7 +17,7 @@ type MerkleNode struct {
 	Rchind *MerkleNode
 }
 
-func NewTree(txs []*Transaction) (root *MerkleNode, err error) {
+func NewMerkleTree(txs []*Transaction) (root *MerkleNode, err error) {
 	if len(txs) == 0 {
 		return nil, errors.New("NewTree() error: doesn't cotain any transactions")
 	}

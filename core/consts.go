@@ -2,7 +2,7 @@ package core
 
 import "time"
 
-// block
+// Tx
 const (
 	MIN_TRANSACTIONS_PER_BLOCK = 2  // txs
 	MAX_TRANSACTIONS_PER_BLOCK = 10 // txs
