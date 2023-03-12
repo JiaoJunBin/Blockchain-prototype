@@ -115,8 +115,8 @@ func (bc *Blockchain) AdjustDifficulty() (nBits uint32, err error) {
 			return GENESIS_NBITS, err
 		}
 		// calculate new difficulty
-		olddiff := CompactToBig(lastBlock.Header.NBits)
-		actualTime := lastBlock.Header.TimeStamp - lastNBlock.Header.TimeStamp
+		olddiff := CompactToBig(lastBlock.NBits)
+		actualTime := lastBlock.TimeStamp - lastNBlock.TimeStamp
 		nanoExpectedTime := EXPECTED_TIME.Nanoseconds()
 
 		frac := new(big.Int).Div(big.NewInt(actualTime), big.NewInt(nanoExpectedTime))
@@ -124,5 +124,5 @@ func (bc *Blockchain) AdjustDifficulty() (nBits uint32, err error) {
 		compact := BigToCompact(newDiff)
 		return compact, nil
 	}
-	return lastBlock.Header.NBits, nil
+	return lastBlock.NBits, nil
 }

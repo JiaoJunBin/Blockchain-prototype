@@ -32,7 +32,6 @@ func (bc *Blockchain) GenerateBlock(memPool map[hash]*Transaction) (b *Block, er
 	if err != nil {
 		return nil, err
 	}
-
 	root, err := NewMerkleTree(txs)
 	if err != nil {
 		return nil, err
@@ -47,15 +46,21 @@ func (bc *Blockchain) GenerateBlock(memPool map[hash]*Transaction) (b *Block, er
 	}
 	newHeader := &BlockHeader{
 		Index:          bc.GetIndex(),
-		PrevBlockHash:  lastBlock.CurBlockHash,
+		PrevBlockHash:  lastBlock.CurHeaderHash,
 		MerkleRootHash: root.Value,
-		TimeStamp:      int64(time.Now().Nanosecond()),
 		NBits:          nbits,
 		Nonce:          0, // adjust Nonce in PoW()
 	}
 
-	newBlock := PoW(newHeader)
-
+	nonce, hash := PoW(newHeader)
+	newHeader.Nonce = nonce
+	newBlock := &Block{
+		BlockHeader:   newHeader,
+		CurHeaderHash: hash,
+		Tx:            txs,
+		MerkleRoot:    root,
+		TimeStamp:     int64(time.Now().Nanosecond()),
+	}
 	return newBlock, nil
 }
 

@@ -1,5 +1,6 @@
 package core
 
-func PoW(h *BlockHeader) (b *Block) {
+// TODO: implement PoW algorithm
+func PoW(h *BlockHeader) (nonce uint32, hash hash) {
 	return
 }
