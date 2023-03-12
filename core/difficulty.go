@@ -94,3 +94,35 @@ func BigToCompact(n *big.Int) uint32 {
 	}
 	return compact
 }
+
+/**
+ * adjust difficulty every N Blocks (difined in consts.go)
+ * New Difficulty = Old Difficulty * (Actual Time of Last N Blocks / EXPECTED_TIME)
+ */
+func (bc *Blockchain) AdjustDifficulty() (nBits uint32, err error) {
+	if bc.GetIndex() == 0 {
+		return GENESIS_NBITS, nil
+	}
+
+	lastBlock, err := bc.GetPrevBlock(1)
+	if err != nil {
+		return GENESIS_NBITS, err
+	}
+	if bc.GetIndex()%DIFFICULTY_ADJUSTMENT_INTERVAL == 0 {
+
+		lastNBlock, err := bc.GetPrevBlock(int(BLOCK_GENERATION_INTERVAL))
+		if err != nil {
+			return GENESIS_NBITS, err
+		}
+		// calculate new difficulty
+		olddiff := CompactToBig(lastBlock.Header.NBits)
+		actualTime := lastBlock.Header.TimeStamp - lastNBlock.Header.TimeStamp
+		nanoExpectedTime := EXPECTED_TIME.Nanoseconds()
+
+		frac := new(big.Int).Div(big.NewInt(actualTime), big.NewInt(nanoExpectedTime))
+		newDiff := olddiff.Mul(olddiff, frac)
+		compact := BigToCompact(newDiff)
+		return compact, nil
+	}
+	return lastBlock.Header.NBits, nil
+}

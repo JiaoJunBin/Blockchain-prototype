@@ -19,7 +19,7 @@ func TestBigToCompact(t *testing.T) {
 	}
 
 	b := ToBig(z)
-	// bignum:=uint256.ToBig()
+	// b:=uint256.ToBig(z)
 
 	rst := BigToCompact(b)
 	log.Printf("rst= %x\n", rst)

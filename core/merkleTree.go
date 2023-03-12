@@ -6,10 +6,6 @@ import (
 )
 
 // a binary merkle tree
-type MerkleTree struct {
-	root *MerkleNode
-}
-
 type MerkleNode struct {
 	Value  hash
 	Parent *MerkleNode
@@ -17,17 +13,16 @@ type MerkleNode struct {
 	Rchind *MerkleNode
 }
 
+// build a merkle tree from given transaction
 func NewMerkleTree(txs []*Transaction) (root *MerkleNode, err error) {
 	if len(txs) == 0 {
 		return nil, errors.New("NewTree() error: doesn't cotain any transactions")
 	}
-
-	hashList := make([]hash, 0)
+	hList := make([]hash, 0)
 	for _, tx := range txs {
-		bytetx := StructToByte(tx)
-		hashList = append(hashList, sha256.Sum256(bytetx))
+		hList = append(hList, tx.ID)
 	}
-	return buildTree(hashList), nil
+	return buildTree(hList), nil
 }
 
 // arg: hash of transactions return: root

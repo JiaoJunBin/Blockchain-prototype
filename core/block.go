@@ -1,6 +1,6 @@
 package core
 
-import ()
+// import "time"
 
 type hash [32]byte
 
@@ -9,7 +9,7 @@ type Block struct {
 	Header       *BlockHeader
 	CurBlockHash hash
 	Tx           []*Transaction // ascending order
-	MerkleRoot   *MerkleTree
+	MerkleRoot   *MerkleNode    // doesn't contain txs
 }
 
 // all field should be used in mining
@@ -17,7 +17,7 @@ type BlockHeader struct {
 	Index          uint
 	PrevBlockHash  hash   // previous block header hash
 	MerkleRootHash hash   //
-	TimeStamp      uint64 // the creation time of block (seconds from Unix Epoch)
+	TimeStamp      int64  // the creation time of block (seconds from Unix Epoch)
 	NBits          uint32 // difficulty
 	Nonce          uint32
 }
