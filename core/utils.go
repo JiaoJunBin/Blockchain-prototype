@@ -16,11 +16,11 @@ type mockStruct struct {
 	cap  int
 }
 
-// convert a struct to []byte
-func StructToByte[T any](anystruct T) (data []byte) {
-	len := unsafe.Sizeof(anystruct)
+// convert a struct to []byte in big endian
+func ToByte[T any](anyType T) (data []byte) {
+	len := unsafe.Sizeof(anyType)
 	mockBytes := &mockStruct{
-		addr: uintptr(unsafe.Pointer(&anystruct)),
+		addr: uintptr(unsafe.Pointer(&anyType)),
 		len:  int(len),
 		cap:  int(len),
 	}

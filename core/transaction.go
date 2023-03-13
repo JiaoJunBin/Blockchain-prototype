@@ -16,6 +16,6 @@ type Txoutput struct {
 }
 
 func (tx *Transaction) Hash() hash {
-	b := StructToByte(tx)
+	b := ToByte(tx)
 	return sha256.Sum256(b)
 }

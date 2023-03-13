@@ -2,7 +2,7 @@ package core
 
 import (
 	"bytes"
-	"errors"
+	"github.com/pkg/errors"
 	"sort"
 	"time"
 )
@@ -13,6 +13,10 @@ type Blockchain struct {
 
 func (bc *Blockchain) GetIndex() uint {
 	return uint(len(bc.Blocks))
+}
+
+func (bc *Blockchain) GetLastBlock() (b *Block, err error) {
+	return bc.Blocks[0], nil
 }
 
 // counting backward, GetPrevBlock(1) meaning get the prev 1 block before last block
@@ -36,7 +40,7 @@ func (bc *Blockchain) GenerateBlock(memPool map[hash]*Transaction) (b *Block, er
 	if err != nil {
 		return nil, err
 	}
-	lastBlock, err := bc.GetPrevBlock(1)
+	lastBlock, err := bc.GetLastBlock()
 	if err != nil {
 		return nil, err
 	}
@@ -90,3 +94,10 @@ func preparetxs(memPool map[hash]*Transaction) (txs []*Transaction, err error) {
 	})
 	return txs, nil
 }
+
+// func (bc *Blockchain)ValidateNewBlock(b *Block) bool {
+// 	lastBlock,err:=bc.GetPrevBlock(1)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// }
