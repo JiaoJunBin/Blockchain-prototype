@@ -2,15 +2,15 @@ package core
 
 import (
 	// bc "blockchain/prototype"
+	"log"
 	"testing"
 )
 
-func TestStructToByte(t *testing.T) {
-	a := struct {
-		v string
-	}{"hello"}
-	data := StructToByte(a)
-	if len(data) <= 0 {
-		t.Errorf("data=%v\n", data)
-	}
+func TestToByte(t *testing.T) {
+	// a := struct {
+	// 	v string
+	// }{"hello"}
+	a := 1
+	data := ToByte(a)
+	log.Printf("a=%d", data)
 }

@@ -2,7 +2,7 @@ package core
 
 import (
 	"crypto/sha256"
-	"errors"
+	"github.com/pkg/errors"
 )
 
 // a binary merkle tree
@@ -16,7 +16,7 @@ type MerkleNode struct {
 // build a merkle tree from given transaction
 func NewMerkleTree(txs []*Transaction) (root *MerkleNode, err error) {
 	if len(txs) == 0 {
-		return nil, errors.New("NewTree() error: doesn't cotain any transactions")
+		return nil, errors.New("NewMerkleTree() error: doesn't cotain any transactions")
 	}
 	hList := make([]hash, 0)
 	for _, tx := range txs {
@@ -88,7 +88,7 @@ func buildTree(hList []hash) (root *MerkleNode) {
 }
 
 func ComputeParentHash(m, n *MerkleNode) hash {
-	mb := StructToByte(m)
-	nb := StructToByte(n)
+	mb := ToByte(m)
+	nb := ToByte(n)
 	return sha256.Sum256(append(mb, nb...))
 }

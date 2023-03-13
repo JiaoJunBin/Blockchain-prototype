@@ -104,7 +104,7 @@ func (bc *Blockchain) AdjustDifficulty() (nBits uint32, err error) {
 		return GENESIS_NBITS, nil
 	}
 
-	lastBlock, err := bc.GetPrevBlock(1)
+	lastBlock, err := bc.GetLastBlock()
 	if err != nil {
 		return GENESIS_NBITS, err
 	}

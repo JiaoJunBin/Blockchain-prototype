@@ -1,5 +1,7 @@
 package core
 
+import "crypto/sha256"
+
 // import "time"
 
 type hash [32]byte
@@ -10,7 +12,7 @@ type Block struct {
 	CurHeaderHash hash
 	Tx            []*Transaction // ascending order
 	MerkleRoot    *MerkleNode    // doesn't contain txs
-	TimeStamp      int64  // the creation time of block (seconds from Unix Epoch)
+	TimeStamp     int64          // the creation time of block (seconds from Unix Epoch)
 }
 
 // all field should be used in mining
@@ -20,4 +22,9 @@ type BlockHeader struct {
 	MerkleRootHash hash   //
 	NBits          uint32 // difficulty
 	Nonce          uint32
+}
+
+func (b *Block) IsValid() bool {
+	headerHash := ToByte(b.BlockHeader)
+	return b.CurHeaderHash == sha256.Sum256(headerHash)
 }

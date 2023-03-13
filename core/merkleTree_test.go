@@ -20,9 +20,9 @@ func TestBuildTree(t *testing.T) {
 	}
 	hList := make([]hash, 0)
 	for _, c := range cases {
-		b := StructToByte(c)
+		b := ToByte(c)
 		hList = append(hList, sha256.Sum256(b))
 	}
 	root := buildTree(hList)
-	fmt.Printf("root.Value= %v\n", root.Value)
+	fmt.Printf("root.Value= %x\n", root.Value)
 }
