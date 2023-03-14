@@ -1,6 +1,6 @@
 package core
 
 //TODO: for coinbase transaction
-func MintCoins() {
-
+func NewCoinbaseTx() (t *Transaction) {
+	return
 }
