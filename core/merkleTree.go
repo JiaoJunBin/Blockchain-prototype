@@ -88,7 +88,7 @@ func buildTree(hList []hash) (root *MerkleNode) {
 }
 
 func ComputeParentHash(m, n *MerkleNode) hash {
-	mb := ToByte(m)
-	nb := ToByte(n)
+	mb := m.Serialize()
+	nb := n.Serialize()
 	return sha256.Sum256(append(mb, nb...))
 }

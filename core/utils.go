@@ -1,9 +1,9 @@
 package core
 
 import (
-	"github.com/holiman/uint256"
 	"math/big"
-	"unsafe"
+
+	"github.com/holiman/uint256"
 )
 
 // type toByte interface {
@@ -14,18 +14,6 @@ type mockStruct struct {
 	addr uintptr
 	len  int
 	cap  int
-}
-
-// convert a struct to []byte in big endian
-func ToByte[T any](anyType T) (data []byte) {
-	len := unsafe.Sizeof(anyType)
-	mockBytes := &mockStruct{
-		addr: uintptr(unsafe.Pointer(&anyType)),
-		len:  int(len),
-		cap:  int(len),
-	}
-	data = *(*[]byte)(unsafe.Pointer(mockBytes))
-	return
 }
 
 // convert uint256.Int to big.Int

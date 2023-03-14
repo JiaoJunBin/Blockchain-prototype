@@ -2,9 +2,11 @@ package core
 
 import (
 	"bytes"
-	"github.com/pkg/errors"
+	"crypto/sha256"
 	"sort"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type Blockchain struct {
@@ -30,12 +32,35 @@ func (bc *Blockchain) GetPrevBlock(i int) (b *Block, err error) {
 	return bc.Blocks[len(bc.Blocks)-i-1], nil
 }
 
-func (bc *Blockchain) GenerateBlock(memPool map[hash]*Transaction) (b *Block, err error) {
-
-	txs, err := preparetxs(memPool)
+// args: coinbaase Transaction
+func GenerateGenisesBlock(cbtx *Transaction) (b *Block, err error) {
+	root, err := NewMerkleTree([]*Transaction{cbtx})
 	if err != nil {
 		return nil, err
 	}
+	newHeader := &BlockHeader{
+		Index:          0,
+		PrevBlockHash:  [32]byte{},
+		MerkleRootHash: cbtx.ID,
+		NBits:          GENESIS_NBITS,
+		Nonce:          0,
+	}
+	genesisBlock := &Block{
+		BlockHeader:   newHeader,
+		CurHeaderHash: sha256.Sum256(newHeader.Serialize()),
+		Tx:            []*Transaction{cbtx},
+		MerkleRoot:    root,
+		TimeStamp:     int64(time.Now().Nanosecond()),
+	}
+	return genesisBlock, nil
+}
+
+func (bc *Blockchain) GenerateBlock(txs []*Transaction) (b *Block, err error) {
+
+	// txs, err := preparetxs(memPool)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	root, err := NewMerkleTree(txs)
 	if err != nil {
 		return nil, err
@@ -69,7 +94,7 @@ func (bc *Blockchain) GenerateBlock(memPool map[hash]*Transaction) (b *Block, er
 }
 
 // prepare txs for mining
-func preparetxs(memPool map[hash]*Transaction) (txs []*Transaction, err error) {
+func Preparetxs(memPool map[hash]*Transaction) (txs []*Transaction, err error) {
 	if len(memPool) < MIN_TRANSACTIONS_PER_BLOCK {
 		err = errors.New("not enough txs in MemPool to generate block")
 		return

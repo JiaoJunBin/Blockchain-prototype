@@ -6,6 +6,8 @@ import "time"
 const (
 	MIN_TRANSACTIONS_PER_BLOCK = 2  // txs
 	MAX_TRANSACTIONS_PER_BLOCK = 10 // txs
+
+	COINBASE_AMOUNT = 50
 )
 
 // mining

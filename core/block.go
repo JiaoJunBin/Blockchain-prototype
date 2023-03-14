@@ -1,6 +1,8 @@
 package core
 
-import "crypto/sha256"
+import (
+	"crypto/sha256"
+)
 
 // import "time"
 
@@ -25,6 +27,7 @@ type BlockHeader struct {
 }
 
 func (b *Block) IsValid() bool {
-	headerHash := ToByte(b.BlockHeader)
+	headerHash := b.BlockHeader.Serialize()
 	return b.CurHeaderHash == sha256.Sum256(headerHash)
 }
+
