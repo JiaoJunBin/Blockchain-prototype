@@ -27,7 +27,7 @@ type BlockHeader struct {
 }
 
 func (b *Block) IsValid() bool {
-	headerHash := b.BlockHeader.Serialize()
-	return b.CurHeaderHash == sha256.Sum256(headerHash)
+	header := Serialize(b.BlockHeader)
+	return b.CurHeaderHash == sha256.Sum256(header)
 }
 

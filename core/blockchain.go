@@ -47,7 +47,7 @@ func GenerateGenisesBlock(cbtx *Transaction) (b *Block, err error) {
 	}
 	genesisBlock := &Block{
 		BlockHeader:   newHeader,
-		CurHeaderHash: sha256.Sum256(newHeader.Serialize()),
+		CurHeaderHash: sha256.Sum256(Serialize(newHeader)),
 		Tx:            []*Transaction{cbtx},
 		MerkleRoot:    root,
 		TimeStamp:     int64(time.Now().Nanosecond()),
