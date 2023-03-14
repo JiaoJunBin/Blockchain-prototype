@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"testing"
+	"unsafe"
 )
 
 func TestBuildTree(t *testing.T) {
@@ -25,4 +26,16 @@ func TestBuildTree(t *testing.T) {
 	}
 	root := buildTree(hList)
 	fmt.Printf("root.Value= %x\n", root.Value)
+}
+
+// convert a struct to []byte in big endian
+func ToByte[T any](anyType T) (data []byte) {
+	len := unsafe.Sizeof(anyType)
+	mockBytes := &mockStruct{
+		addr: uintptr(unsafe.Pointer(&anyType)),
+		len:  int(len),
+		cap:  int(len),
+	}
+	data = *(*[]byte)(unsafe.Pointer(mockBytes))
+	return
 }
