@@ -17,5 +17,5 @@ type Txoutput struct {
 
 func (tx *Transaction) Hash() hash {
 	tx.ID = [32]byte{}
-	return sha256.Sum256(tx.Serialize())
+	return sha256.Sum256(Serialize(tx))
 }
