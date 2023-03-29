@@ -2,7 +2,10 @@ package core
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"crypto/sha256"
+	"encoding/hex"
+	"log"
 	"sort"
 	"time"
 
@@ -135,4 +138,79 @@ func (bc *Blockchain) ValidateNewBlock(b *Block) (bool, error) {
 
 func (bc *Blockchain) AppendBlock(b *Block) {
 	bc.Blocks = append(bc.Blocks, b)
+}
+
+// FindUTXO finds all unspent transaction outputs and returns transactions with spent outputs removed
+func (bc *Blockchain) FindUTXO() map[string]TXOutputs {
+	UTXO := make(map[string]TXOutputs)
+	spentTXOs := make(map[string][]int)
+	for _, block := range bc.Blocks {
+
+		for _, tx := range block.Tx {
+			txID := hex.EncodeToString(tx.ID[:])
+
+		Outputs:
+			for outIdx, out := range tx.Vout {
+				// Was the output spent?
+				if spentTXOs[txID] != nil {
+					for _, spentOutIdx := range spentTXOs[txID] {
+						if spentOutIdx == outIdx {
+							continue Outputs
+						}
+					}
+				}
+
+				outs := UTXO[txID]
+				outs.Outputs = append(outs.Outputs, out)
+				UTXO[txID] = outs
+			}
+
+			if tx.IsCoinbase() == false {
+				for _, in := range tx.Vin {
+					inTxID := hex.EncodeToString(in.Txid)
+					spentTXOs[inTxID] = append(spentTXOs[inTxID], in.Vout)
+				}
+			}
+		}
+
+		if len(block.PrevBlockHash) == 0 {
+			break
+		}
+	}
+
+	return UTXO
+}
+
+// FindTransaction finds a transaction by its ID
+func (bc *Blockchain) FindTransaction(ID []byte) (Transaction, error) {
+
+	for _, block := range bc.Blocks {
+
+		for _, tx := range block.Tx {
+			if bytes.Compare(tx.ID[:], ID) == 0 {
+				return *tx, nil
+			}
+		}
+
+		if len(block.PrevBlockHash) == 0 {
+			break
+		}
+	}
+
+	return Transaction{}, errors.New("Transaction is not found")
+}
+
+// SignTransaction signs inputs of a Transaction
+func (bc *Blockchain) SignTransaction(tx *Transaction, privKey ecdsa.PrivateKey) {
+	prevTXs := make(map[string]Transaction)
+
+	for _, vin := range tx.Vin {
+		prevTX, err := bc.FindTransaction(vin.Txid)
+		if err != nil {
+			log.Panic(err)
+		}
+		prevTXs[hex.EncodeToString(prevTX.ID[:])] = prevTX
+	}
+
+	tx.Sign(privKey, prevTXs)
 }
