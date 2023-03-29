@@ -30,4 +30,3 @@ func (b *Block) IsValid() bool {
 	header := Serialize(b.BlockHeader)
 	return b.CurHeaderHash == sha256.Sum256(header)
 }
-
