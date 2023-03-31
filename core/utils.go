@@ -28,7 +28,7 @@ func ToBig(z *uint256.Int) *big.Int {
 }
 
 // Serialize serializes the BlockHeader
-func  Serialize[T any](anyType T) []byte {
+func Serialize[T any](anyType T) []byte {
 	var result bytes.Buffer
 	encoder := gob.NewEncoder(&result)
 
@@ -40,11 +40,18 @@ func  Serialize[T any](anyType T) []byte {
 }
 
 // DeserializeBlock deserializes a BlockHeader
-func Deserialize[T any](d []byte,anyType *T) {
+func Deserialize[T any](d []byte, anyType *T) {
 
 	decoder := gob.NewDecoder(bytes.NewReader(d))
 	err := decoder.Decode(anyType)
 	if err != nil {
 		log.Panicln(err)
+	}
+}
+
+// ReverseBytes reverses a byte array
+func ReverseBytes(data []byte) {
+	for i, j := 0, len(data)-1; i < j; i, j = i+1, j-1 {
+		data[i], data[j] = data[j], data[i]
 	}
 }
