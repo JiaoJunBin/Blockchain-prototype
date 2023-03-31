@@ -1,12 +1,10 @@
 package core
 
 import (
-	"bytes"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/gob"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -27,41 +25,16 @@ func (tx Transaction) IsCoinbase() bool {
 	return len(tx.Vin) == 1 && len(tx.Vin[0].Txid) == 0 && tx.Vin[0].Vout == -1
 }
 
-// Serialize returns a serialized Transaction
-func (tx Transaction) Serialize() []byte {
-	var encoded bytes.Buffer
-
-	enc := gob.NewEncoder(&encoded)
-	err := enc.Encode(tx)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	return encoded.Bytes()
-}
-
-// DeserializeTransaction deserializes a transaction
-func DeserializeTransaction(data []byte) Transaction {
-	var transaction Transaction
-
-	decoder := gob.NewDecoder(bytes.NewReader(data))
-	err := decoder.Decode(&transaction)
-	if err != nil {
-		log.Panic(err)
-	}
-	return transaction
-}
-
 // Hash returns the hash of the Transaction
-func (tx *Transaction) Hash() []byte {
+func (tx *Transaction) Hash() hash {
 	var hash [32]byte
 
 	txCopy := *tx
 	txCopy.ID = hash
 
-	hash = sha256.Sum256(txCopy.Serialize())
+	hash = sha256.Sum256(Serialize(txCopy))
 
-	return hash[:]
+	return hash
 }
 
 // Sign signs each input of a Transaction
@@ -182,27 +155,6 @@ func (tx *Transaction) Verify(prevTXs map[string]Transaction) bool {
 	return true
 }
 
-// NewCoinbaseTX creates a new coinbase transaction
-func NewCoinbaseTX(to, data string) *Transaction {
-	if data == "" {
-		randData := make([]byte, 20)
-		_, err := rand.Read(randData)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		data = fmt.Sprintf("%x", randData)
-	}
-
-	txin := TXInput{[]byte{}, -1, nil, []byte(data)}
-	txout := NewTXOutput(subsidy, to)
-	tx := Transaction{[32]byte{}, []TXInput{txin}, []TXOutput{*txout}}
-
-	copy(tx.ID[:], tx.Hash())
-
-	return &tx
-}
-
 // NewTransaction creates a new transaction
 func NewTransaction(wallet *Wallet, to string, amount int, Blockchain *Blockchain) *Transaction {
 	var inputs []TXInput
@@ -236,8 +188,7 @@ func NewTransaction(wallet *Wallet, to string, amount int, Blockchain *Blockchai
 	}
 
 	tx := Transaction{[32]byte{}, inputs, outputs}
-	copy(tx.ID[:], tx.Hash())
-	//tx.ID[:] = tx.Hash()
+	tx.ID = tx.Hash()
 	Blockchain.SignTransaction(&tx, wallet.PrivateKey)
 
 	return &tx
