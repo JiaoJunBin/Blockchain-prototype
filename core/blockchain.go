@@ -165,7 +165,7 @@ func (bc *Blockchain) FindUTXO() map[string]TXOutputs {
 				UTXO[txID] = outs
 			}
 
-			if tx.IsCoinbase() == false {
+			if !tx.IsCoinbase() {
 				for _, in := range tx.Vin {
 					inTxID := hex.EncodeToString(in.Txid)
 					spentTXOs[inTxID] = append(spentTXOs[inTxID], in.Vout)
@@ -187,7 +187,7 @@ func (bc *Blockchain) FindTransaction(ID []byte) (Transaction, error) {
 	for _, block := range bc.Blocks {
 
 		for _, tx := range block.Tx {
-			if bytes.Compare(tx.ID[:], ID) == 0 {
+			if bytes.Equal(tx.ID[:], ID) {
 				return *tx, nil
 			}
 		}
